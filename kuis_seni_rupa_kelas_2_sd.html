@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Seni Rupa Kelas 2 SD</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka & Nunito for child-friendly typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library for high performance particle effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        brandYellow: '#FFD166',
+                        brandPink: '#FF85A1',
+                        brandBlue: '#4EA8DE',
+                        brandGreen: '#06D6A0',
+                        brandPurple: '#9D4EDD',
+                    },
+                    animation: {
+                        'bounce-short': 'bounce 0.6s ease-in-out 1',
+                        'wiggle': 'wiggle 0.5s ease-in-out infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pop': 'pop 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        pop: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fef3c7 0%, #fce7f3 50%, #e0f2fe 100%);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .font-title {
+            font-family: 'Fredoka', cursive;
+        }
+
+        .btn-card {
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+        }
+
+        .btn-card:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 rgba(0,0,0,0.12);
+        }
+
+        .btn-card:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+        }
+
+        /* Glassmorphism styling */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 4px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF85A1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 antialiased overflow-x-hidden relative">
+
+    <!-- Header Controls -->
+    <header class="w-full max-w-4xl mx-auto px-4 pt-4 flex justify-between items-center z-20">
+        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm border-2 border-amber-300">
+            <span class="text-2xl">🎨</span>
+            <span class="font-title text-slate-700 font-bold text-sm sm:text-base">Seni Rupa Kelas 2 SD</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <!-- Speech TTS Toggle / Active Indicator -->
+            <button id="ttsBtn" onclick="toggleSpeech()" class="bg-white/80 hover:bg-white text-slate-700 p-2.5 rounded-full shadow border-2 border-sky-300 transition-all flex items-center justify-center" title="Bicara / Text-To-Speech">
+                <span id="ttsIcon" class="text-xl">🔊</span>
+            </button>
+            
+            <!-- Music BGM Toggle Button -->
+            <button id="bgmBtn" onclick="toggleBGM()" class="bg-white/80 hover:bg-white text-slate-700 px-3.5 py-2 rounded-full shadow border-2 border-purple-300 font-bold text-sm flex items-center gap-1.5 transition-all">
+                <span id="bgmIcon" class="text-lg">🎵</span>
+                <span id="bgmText" class="hidden sm:inline">Musik: OFF</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow flex items-center justify-center p-3 sm:p-6 z-10">
+        <div class="w-full max-w-3xl">
+
+            <!-- 1. START SCREEN -->
+            <div id="startScreen" class="glass-panel rounded-3xl p-6 sm:p-10 text-center shadow-2xl relative overflow-hidden animate-pop">
+                <!-- Decorative Floating Icons -->
+                <div class="absolute -top-4 -left-4 text-5xl opacity-40 animate-float">🖌️</div>
+                <div class="absolute top-10 -right-4 text-5xl opacity-40 animate-float" style="animation-delay: 1s;">📐</div>
+                <div class="absolute -bottom-4 left-10 text-5xl opacity-40 animate-float" style="animation-delay: 1.5s;">🖍️</div>
+                <div class="absolute -bottom-4 -right-4 text-5xl opacity-40 animate-float" style="animation-delay: 2s;">⭐</div>
+
+                <div class="inline-block bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase mb-4 border border-amber-300">
+                    Semester 1 • Kurikulum Merdeka
+                </div>
+
+                <h1 class="font-title text-3xl sm:text-5xl font-extrabold text-slate-800 mb-3 leading-tight">
+                    Petualangan <span class="text-pink-500 underline decoration-wavy decoration-yellow-400">Seni Rupa</span>
+                </h1>
+                
+                <p class="text-slate-600 text-sm sm:text-base mb-6 max-w-lg mx-auto font-medium">
+                    Asah pengetahuanmu tentang <span class="text-indigo-600 font-bold">garis</span>, <span class="text-emerald-600 font-bold">bidang</span>, dan <span class="text-amber-600 font-bold">campuran warna</span>! Siap menjadi Bintang Seni?
+                </p>
+
+                <!-- Visual Art Illustration Badge -->
+                <div class="my-6 flex justify-center items-center gap-4">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-rose-400 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shadow-md transform -rotate-6">🔴</div>
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-amber-400 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shadow-md transform rotate-3">🟡</div>
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-sky-400 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shadow-md transform -rotate-3">🔵</div>
+                </div>
+
+                <!-- Input Player Name -->
+                <div class="max-w-xs mx-auto mb-6">
+                    <label for="playerName" class="block text-left text-xs font-bold text-slate-600 mb-1 ml-2">Nama Siswa / Panggilan:</label>
+                    <input type="text" id="playerName" placeholder="Tulis namamu di sini..." class="w-full px-4 py-3 rounded-2xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none text-center font-bold text-slate-700 bg-white shadow-inner text-base">
+                </div>
+
+                <button onclick="startGame()" class="btn-card bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-title text-xl sm:text-2xl px-10 py-4 rounded-2xl shadow-lg border-b-4 border-teal-700 transform hover:scale-105 transition-all inline-flex items-center gap-3">
+                    <span>🚀</span> MULAI MAIN!
+                </button>
+            </div>
+
+
+            <!-- 2. QUIZ SCREEN -->
+            <div id="quizScreen" class="hidden glass-panel rounded-3xl p-5 sm:p-8 shadow-2xl relative">
+                
+                <!-- Top Info Bar: Progress & Score -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6 bg-slate-50/80 p-3 sm:p-4 rounded-2xl border border-slate-200">
+                    <div class="w-full sm:w-1/2">
+                        <div class="flex justify-between text-xs sm:text-sm font-bold text-slate-600 mb-1">
+                            <span id="questionCounterText">Soal 1 dari 30</span>
+                            <span id="progressPercent">3%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-3.5 p-0.5 border border-slate-300">
+                            <div id="progressBar" class="bg-gradient-to-r from-amber-400 to-emerald-400 h-2.5 rounded-full transition-all duration-300" style="width: 3.33%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                        <div class="bg-amber-100 text-amber-800 font-bold px-3 py-1.5 rounded-xl border border-amber-300 flex items-center gap-1.5 text-sm sm:text-base">
+                            <span>⭐ Skor:</span>
+                            <span id="scoreDisplay" class="text-xl font-extrabold">0</span>
+                        </div>
+                        <button onclick="readCurrentQuestion()" class="bg-sky-100 hover:bg-sky-200 text-sky-700 px-3 py-1.5 rounded-xl border border-sky-300 font-bold text-xs sm:text-sm flex items-center gap-1 transition-all" title="Bacakan Soal">
+                            <span>📢</span> <span class="hidden sm:inline">Baca Soal</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-white rounded-2xl p-5 sm:p-7 shadow-md border-2 border-indigo-100 mb-6 relative">
+                    <div class="flex items-start gap-3">
+                        <span class="bg-indigo-500 text-white font-title text-base sm:text-lg w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 shadow" id="questionNumBadge">
+                            1
+                        </span>
+                        <h2 id="questionText" class="font-title text-lg sm:text-2xl text-slate-800 leading-snug">
+                            Memuat soal...
+                        </h2>
+                    </div>
+
+                    <!-- Dynamic Illustration Container for Color/Shape Visual Helpers -->
+                    <div id="visualHelper" class="mt-4 hidden justify-center items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <!-- Visual elements injected via JS if question has visual helper -->
+                    </div>
+                </div>
+
+                <!-- Options List -->
+                <div id="optionsContainer" class="grid grid-cols-1 gap-3.5 mb-2">
+                    <!-- Dynamic Answer Option Buttons inserted via JavaScript -->
+                </div>
+            </div>
+
+
+            <!-- 3. RESULT SCREEN -->
+            <div id="resultScreen" class="hidden glass-panel rounded-3xl p-6 sm:p-10 text-center shadow-2xl animate-pop">
+                <div id="resultBadge" class="text-6xl sm:text-7xl mb-2 animate-bounce">🏆</div>
+                
+                <h2 id="resultTitle" class="font-title text-3xl sm:text-4xl font-extrabold text-slate-800 mb-1">
+                    Luar Biasa!
+                </h2>
+                <p id="resultPlayerGreeting" class="text-slate-600 font-bold text-base sm:text-lg mb-4">
+                    Selamat, kamu telah menyelesaikan kuis!
+                </p>
+
+                <!-- Stars Rating -->
+                <div class="flex justify-center gap-2 text-4xl sm:text-5xl my-3" id="starsContainer">
+                    <span>⭐</span><span>⭐</span><span>⭐</span>
+                </div>
+
+                <!-- Score Card Display -->
+                <div class="bg-white rounded-2xl p-6 my-6 shadow-inner border-2 border-amber-200 max-w-md mx-auto">
+                    <div class="text-xs uppercase tracking-widest font-bold text-slate-400 mb-1">Total Skor Kamu</div>
+                    <div class="font-title text-5xl sm:text-6xl font-black text-amber-500 mb-4" id="finalScore">
+                        0
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
+                        <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+                            <div class="text-xs font-bold text-emerald-600">Jawaban Benar</div>
+                            <div class="font-title text-2xl font-bold text-emerald-700" id="correctCount">0</div>
+                        </div>
+                        <div class="bg-rose-50 p-3 rounded-xl border border-rose-200">
+                            <div class="text-xs font-bold text-rose-600">Jawaban Salah</div>
+                            <div class="font-title text-2xl font-bold text-rose-700" id="wrongCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Praise Message -->
+                <div id="praiseMessage" class="bg-amber-100 text-amber-900 font-bold p-4 rounded-2xl mb-6 text-sm sm:text-base border border-amber-300">
+                    Kamu Bintang Seni Rupa!
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-3">
+                    <button onclick="restartQuiz()" class="btn-card bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-title text-lg px-8 py-3.5 rounded-2xl shadow-md border-b-4 border-indigo-800 flex items-center justify-center gap-2">
+                        <span>🔄</span> Main Lagi
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Educational Discussion Popup Modal for Wrong Answers -->
+    <div id="explanationModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-4 border-amber-400 animate-pop relative">
+            
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-2xl shrink-0 font-bold">
+                    💡
+                </div>
+                <div>
+                    <h3 class="font-title text-xl font-bold text-slate-800">Ayo Belajar Bersama!</h3>
+                    <p class="text-xs font-bold text-rose-500">Jawabanmu kurang tepat</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-left mb-6">
+                <div class="bg-emerald-50 p-3.5 rounded-xl border border-emerald-200">
+                    <span class="text-xs font-bold text-emerald-600 uppercase block mb-0.5">Kunci Jawaban Benar:</span>
+                    <p id="modalCorrectAnswer" class="font-title text-base text-emerald-800 font-bold">
+                        -
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <span class="text-xs font-bold text-slate-500 uppercase block mb-0.5">Penjelasan Singkat:</span>
+                    <p id="modalExplanation" class="text-sm text-slate-700 leading-relaxed font-medium">
+                        -
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="closeModalAndNext()" class="btn-card w-full bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-title text-lg py-3 rounded-2xl shadow border-b-4 border-teal-700 flex items-center justify-center gap-2">
+                <span>Lanjut Soal Berikutnya</span> ➔
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-3 text-xs font-bold text-slate-500 z-10">
+        Media Pembelajaran Seni Rupa Kelas 2 SD • Diperkuat dengan Audio & Pembahasan Interaktif
+    </footer>
+
+
+    <script>
+        // Web Audio API Context for synthesized sound effects
+        let audioCtx = null;
+        let isBgmPlaying = false;
+        let bgmInterval = null;
+        let speechEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Web Audio Synth Sound Effects
+        function playCorrectSound() {
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    
+                    gain.gain.setValueAtTime(0, now + idx * 0.08);
+                    gain.gain.linearRampToValueAtTime(0.2, now + idx * 0.08 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.25);
+                });
+            } catch (e) {
+                console.log('Audio playback error:', e);
+            }
+        }
+
+        function playWrongSound() {
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } catch (e) {
+                console.log('Audio playback error:', e);
+            }
+        }
+
+        function playClickSound() {
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } catch (e) {
+                console.log('Audio error:', e);
+            }
+        }
+
+        // Web Audio Dynamic BGM Generator (Cheerful Synth Melody Loop)
+        function toggleBGM() {
+            initAudio();
+            isBgmPlaying = !isBgmPlaying;
+            const bgmBtn = document.getElementById('bgmBtn');
+            const bgmText = document.getElementById('bgmText');
+            const bgmIcon = document.getElementById('bgmIcon');
+
+            if (isBgmPlaying) {
+                bgmText.innerText = "Musik: ON";
+                bgmIcon.innerText = "🔊";
+                bgmBtn.classList.add('bg-purple-200', 'border-purple-400');
+                startBGMLoop();
+            } else {
+                bgmText.innerText = "Musik: OFF";
+                bgmIcon.innerText = "🎵";
+                bgmBtn.classList.remove('bg-purple-200', 'border-purple-400');
+                stopBGMLoop();
+            }
+        }
+
+        function startBGMLoop() {
+            if (bgmInterval) clearInterval(bgmInterval);
+            const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 349.23, 440.00];
+            let noteIdx = 0;
+
+            bgmInterval = setInterval(() => {
+                if (!isBgmPlaying || !audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(notes[noteIdx], now);
+
+                    gain.gain.setValueAtTime(0.03, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+
+                    noteIdx = (noteIdx + 1) % notes.length;
+                } catch (e) {}
+            }, 400);
+        }
+
+        function stopBGMLoop() {
+            if (bgmInterval) {
+                clearInterval(bgmInterval);
+                bgmInterval = null;
+            }
+        }
+
+        // Speech Synthesis (Text To Speech in Indonesian)
+        function toggleSpeech() {
+            speechEnabled = !speechEnabled;
+            const ttsIcon = document.getElementById('ttsIcon');
+            const ttsBtn = document.getElementById('ttsBtn');
+
+            if (speechEnabled) {
+                ttsIcon.innerText = "🔊";
+                ttsBtn.classList.remove('opacity-50');
+                speakText("Suara pembaca aktif");
+            } else {
+                ttsIcon.innerText = "🔇";
+                ttsBtn.classList.add('opacity-50');
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                }
+            }
+        }
+
+        function speakText(text) {
+            if (!speechEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // Stop any active speech
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = 0.95; // Slightly slower speed for SD children
+            utterance.pitch = 1.1; // Friendly pitch
+            window.speechSynthesis.speak(utterance);
+        }
+
+
+        // Quiz Questions Data (30 Items as specified)
+        const quizData = [
+            {
+                q: "Sekumpulan titik yang letaknya sejajar dan sama besar disebut?",
+                options: ["Garis", "Bidang", "Warna"],
+                answer: 0,
+                exp: "Garis adalah sekumpulan titik-titik yang sejajar, bersambungan, dan sama besar."
+            },
+            {
+                q: "Garis secara umum terbagi menjadi 3 jenis, yaitu?",
+                options: ["Garis pendek, panjang, tipis", "Garis lurus, garis lengkung, garis bergelombang/zigzag", "Garis merah, kuning, hijau"],
+                answer: 1,
+                exp: "Secara umum jenis garis utama adalah garis lurus, garis lengkung, dan garis bergelombang atau zigzag."
+            },
+            {
+                q: "Garis lurus tegak yang menggambarkan benda berdiri tegak disebut garis?",
+                options: ["Horizontal", "Vertikal", "Diagonal"],
+                answer: 1,
+                exp: "Garis vertikal adalah garis lurus tegak dari atas ke bawah yang menggambarkan kesan tegak kokoh."
+            },
+            {
+                q: "Garis lurus yang miring ke kanan atau ke kiri disebut garis?",
+                options: ["Diagonal / Miring", "Vertikal", "Lengkung"],
+                answer: 0,
+                exp: "Garis diagonal posisinya miring ke kanan atau ke kiri."
+            },
+            {
+                q: "Garis lengkung atau bergelombang biasanya menggambarkan kesan?",
+                options: ["Kaku dan tajam", "Kegembiraan / Kecerian / Luwes", "Sedih dan diam"],
+                answer: 1,
+                exp: "Garis lengkung dan bergelombang memberikan kesan yang luwes, lembut, dan gembira."
+            },
+            {
+                q: "Gambar pola zig-zag (vvv / www) merupakan contoh dari garis?",
+                options: ["Spiral", "Zig-zag", "Vertikal"],
+                answer: 1,
+                exp: "Pola garis bersudut patah-patah dinamakan garis zig-zag."
+            },
+            {
+                q: "Gambar lingkaran, persegi, dan segitiga merupakan contoh dari?",
+                options: ["Bidang geometris", "Bidang non-geometris / organik", "Garis lengkung"],
+                answer: 0,
+                exp: "Lingkaran, persegi, dan segitiga adalah bentuk bidang geometris yang teratur."
+            },
+            {
+                q: "Gambar bunga, awan, dan daun termasuk dalam contoh bidang?",
+                options: ["Geometris", "Bidang non-geometris / organik", "Garis lurus"],
+                answer: 1,
+                exp: "Bentuk alami di alam seperti bunga, awan, dan daun termasuk bidang non-geometris (organik)."
+            },
+            {
+                q: "Sesuatu yang terbentuk dari hubungan beberapa garis yang saling bertemu disebut?",
+                options: ["Titik", "Bidang", "Tekstur"],
+                answer: 1,
+                exp: "Ketika garis-garis saling bertemu dan terhubung ujungnya, maka terbentuklah bidang."
+            },
+            {
+                q: "Bidang yang terdiri dari garis lurus dan garis lengkung beraturan dinamakan bidang?",
+                options: ["Geometris", "Organik", "Acak"],
+                answer: 0,
+                exp: "Bidang geometris dibuat dengan aturan garis lurus dan lengkung beraturan."
+            },
+            {
+                q: "Kesan yang diperoleh mata dari cahaya yang dipantulkan oleh suatu benda disebut?",
+                options: ["Garis", "Warna", "Bentuk"],
+                answer: 1,
+                exp: "Warna adalah kesan yang ditangkap oleh mata dari pantulan cahaya benda."
+            },
+            {
+                q: "Warna utama atau warna dasar yang belum dicampur dinamakan warna?",
+                options: ["Sekunder", "Primer", "Tersier"],
+                answer: 1,
+                exp: "Warna primer adalah warna asli/dasar yang belum dicampur warna lain."
+            },
+            {
+                q: "Warna yang dihasilkan dari gabungan dua warna primer disebut warna?",
+                options: ["Sekunder", "Netral", "Gelap"],
+                answer: 0,
+                exp: "Warna sekunder dibuat dari percampuran 2 warna primer."
+            },
+            {
+                q: "Warna yang dihasilkan dari campuran satu warna primer dan satu warna sekunder disebut warna?",
+                options: ["Primer", "Sekunder", "Tersier"],
+                answer: 2,
+                exp: "Warna tersier adalah hasil percampuran antara warna primer dan warna sekunder."
+            },
+            {
+                q: "Hasil dari campuran warna MERAH dan KUNING adalah warna?",
+                options: ["Hijau", "Oranye / Jingga", "Ungu"],
+                answer: 1,
+                exp: "Campuran Merah + Kuning = Oranye (Jingga)."
+            },
+            {
+                q: "Hasil dari campuran warna BIRU dan KUNING adalah warna?",
+                options: ["Hijau", "Cokelat", "Ungu"],
+                answer: 0,
+                exp: "Campuran Biru + Kuning = Hijau."
+            },
+            {
+                q: "Hasil dari campuran warna MERAH dan BIRU adalah warna?",
+                options: ["Hijau", "Ungu", "Hitam"],
+                answer: 1,
+                exp: "Campuran Merah + Biru = Ungu."
+            },
+            {
+                q: "Hasil karya yang dibuat menggunakan garis, bidang, warna, dan bentuk sehingga menghasilkan karya yang indah disebut?",
+                options: ["Karya Seni Musik", "Karya Seni Rupa", "Karya Seni Tari"],
+                answer: 1,
+                exp: "Karya Seni Rupa adalah karya indah yang menggabungkan garis, bidang, warna, dan bentuk."
+            },
+            {
+                q: "Yang termasuk dalam tiga warna primer adalah?",
+                options: ["Merah, Kuning, Biru", "Hijau, Oranye, Ungu", "Hitam, Putih, Cokelat"],
+                answer: 0,
+                exp: "Tiga warna primer utama adalah Merah, Kuning, dan Biru."
+            },
+            {
+                q: "Warna daun pada tumbuhan yang segar umumnya berwarna?",
+                options: ["Biru", "Merah", "Hijau"],
+                answer: 2,
+                exp: "Daun yang tumbuh segar umumnya berwarna hijau."
+            },
+            {
+                q: "Buah pisang yang sudah matang biasanya memiliki warna?",
+                options: ["Kuning", "Ungu", "Merah"],
+                answer: 0,
+                exp: "Buah pisang matang berwarna kuning."
+            },
+            {
+                q: "Garis horizontal adalah garis lurus yang mendatar seperti garis?",
+                options: ["Cakrawala / Lautan", "Tiang Listrik", "Atap Rumah"],
+                answer: 0,
+                exp: "Garis horizontal mendatar seperti batas garis lautan dan langit (cakrawala)."
+            },
+            {
+                q: "Contoh benda berbentuk bidang lingkaran di sekitar kita adalah?",
+                options: ["Buku Tulis", "Roda / Uang Logam", "Lemari"],
+                answer: 1,
+                exp: "Roda dan uang logam berbentuk lingkaran."
+            },
+            {
+                q: "Garis putus-putus sering digunakan untuk menggambarkan kesan?",
+                options: ["Bayangan atau Jejak Langkah", "Benda Keras", "Dinding Rumah"],
+                answer: 0,
+                exp: "Garis putus-putus cocok untuk kesan bayangan, lintasan, atau jejak langkah."
+            },
+            {
+                q: "Warna oranye, hijau, dan ungu termasuk ke dalam kelompok warna?",
+                options: ["Primer", "Sekunder", "Tersier"],
+                answer: 1,
+                exp: "Oranye, hijau, dan ungu adalah kelompok warna sekunder."
+            },
+            {
+                q: "Apabila warna merah dicampur dengan warna putih, maka akan menghasilkan warna?",
+                options: ["Merah Muda / Pink", "Merah Tua", "Cokelat"],
+                answer: 0,
+                exp: "Merah + Putih menghasilkan warna Merah Muda (Pink)."
+            },
+            {
+                q: "Garis yang memberikan kesan kokoh dan kuat adalah garis?",
+                options: ["Tegak lurus / Vertikal", "Bergelombang", "Putus-putus"],
+                answer: 0,
+                exp: "Garis tegak lurus (vertikal) memberi kesan berdiri kokoh, tinggi, dan kuat."
+            },
+            {
+                q: "Bentuk bidang tempat kita menulis di buku tulis adalah?",
+                options: ["Segitiga", "Lingkaran", "Persegi Panjang"],
+                answer: 2,
+                exp: "Permukaan kertas buku tulis berbentuk bidang persegi panjang."
+            },
+            {
+                q: "Kegiatan menggambar unsur garis dan bidang agar terlihat indah disebut?",
+                options: ["Menggambar / Melukis", "Menulis", "Menyanyi"],
+                answer: 0,
+                exp: "Menggambar atau melukis adalah kegiatan membentuk citra indah dari garis, bidang, dan warna."
+            },
+            {
+                q: "Campuran dari semua warna primer (merah, kuning, biru) dalam jumlah seimbang akan menghasilkan warna yang cenderung?",
+                options: ["Cerah / Terang", "Gelap / Cokelat Tua", "Putih Bersih"],
+                answer: 1,
+                exp: "Pencampuran ketiga warna primer sekaligus akan menghasilkan warna yang cenderung gelap / cokelat tua."
+            }
+        ];
+
+
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let correctAnswersCount = 0;
+        let wrongAnswersCount = 0;
+        let playerName = "Siswa";
+        let isAnswerLocked = false;
+
+        // Start Quiz Engine
+        function startGame() {
+            playClickSound();
+            const nameInput = document.getElementById('playerName').value.trim();
+            if (nameInput) {
+                playerName = nameInput;
+            }
+
+            currentQuestionIdx = 0;
+            score = 0;
+            correctAnswersCount = 0;
+            wrongAnswersCount = 0;
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        // Render Current Question
+        function renderQuestion() {
+            isAnswerLocked = false;
+            const currentData = quizData[currentQuestionIdx];
+
+            // Update Progress & Badges
+            document.getElementById('questionCounterText').innerText = `Soal ${currentQuestionIdx + 1} dari ${quizData.length}`;
+            const pct = Math.round(((currentQuestionIdx + 1) / quizData.length) * 100);
+            document.getElementById('progressPercent').innerText = `${pct}%`;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+            document.getElementById('scoreDisplay').innerText = score;
+            document.getElementById('questionNumBadge').innerText = currentQuestionIdx + 1;
+
+            // Render Text
+            document.getElementById('questionText').innerText = currentData.q;
+
+            // Render Visual Helper for shapes/color mixing questions
+            const visualHelper = document.getElementById('visualHelper');
+            visualHelper.innerHTML = '';
+            
+            // Render color mixing preview helpers if relevant
+            if (currentData.q.includes("MERAH dan KUNING")) {
+                visualHelper.classList.remove('hidden');
+                visualHelper.classList.add('flex');
+                visualHelper.innerHTML = `<span class="inline-block w-8 h-8 bg-red-500 rounded-full shadow"></span> <span class="font-bold mx-2 text-xl">+</span> <span class="inline-block w-8 h-8 bg-yellow-400 rounded-full shadow"></span> <span class="font-bold mx-2 text-xl">= ?</span>`;
+            } else if (currentData.q.includes("BIRU dan KUNING")) {
+                visualHelper.classList.remove('hidden');
+                visualHelper.classList.add('flex');
+                visualHelper.innerHTML = `<span class="inline-block w-8 h-8 bg-blue-500 rounded-full shadow"></span> <span class="font-bold mx-2 text-xl">+</span> <span class="inline-block w-8 h-8 bg-yellow-400 rounded-full shadow"></span> <span class="font-bold mx-2 text-xl">= ?</span>`;
+            } else if (currentData.q.includes("MERAH dan BIRU")) {
+                visualHelper.classList.remove('hidden');
+                visualHelper.classList.add('flex');
+                visualHelper.innerHTML = `<span class="inline-block w-8 h-8 bg-red-500 rounded-full shadow"></span> <span class="font-bold mx-2 text-xl">+</span> <span class="inline-block w-8 h-8 bg-blue-500 rounded-full shadow"></span> <span class="font-bold mx-2 text-xl">= ?</span>`;
+            } else {
+                visualHelper.classList.add('hidden');
+                visualHelper.classList.remove('flex');
+            }
+
+            // Render Options
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            const optionPrefixes = ['A', 'B', 'C'];
+            const buttonColors = [
+                'hover:border-pink-400 bg-pink-50/50',
+                'hover:border-amber-400 bg-amber-50/50',
+                'hover:border-sky-400 bg-sky-50/50'
+            ];
+
+            currentData.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `btn-card w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-slate-200 ${buttonColors[idx % 3]} font-title text-base sm:text-xl text-slate-700 flex items-center gap-3 transition-all`;
+                btn.onclick = () => handleSelectAnswer(idx, btn);
+
+                btn.innerHTML = `
+                    <span class="w-9 h-9 rounded-xl bg-white shadow border border-slate-200 text-slate-800 font-extrabold flex items-center justify-center shrink-0">
+                        ${optionPrefixes[idx]}
+                    </span>
+                    <span class="flex-grow">${optText}</span>
+                    <span class="status-icon text-2xl hidden"></span>
+                `;
+
+                container.appendChild(btn);
+            });
+
+            // Automatically speak question if enabled
+            readCurrentQuestion();
+        }
+
+        // Read question aloud via Text-to-Speech
+        function readCurrentQuestion() {
+            const currentData = quizData[currentQuestionIdx];
+            const textToRead = `${currentData.q} ... Pilihan A: ${currentData.options[0]}. Pilihan B: ${currentData.options[1]}. Pilihan C: ${currentData.options[2]}`;
+            speakText(textToRead);
+        }
+
+        // Answer Handling Logic
+        function handleSelectAnswer(selectedIdx, btnElement) {
+            if (isAnswerLocked) return;
+            isAnswerLocked = true;
+
+            const currentData = quizData[currentQuestionIdx];
+            const optionsContainer = document.getElementById('optionsContainer');
+            const allBtns = optionsContainer.getElementsByTagName('button');
+
+            if (selectedIdx === currentData.answer) {
+                // --- CORRECT ANSWER ---
+                playCorrectSound();
+                score += 10;
+                correctAnswersCount++;
+
+                btnElement.classList.remove('bg-pink-50/50', 'bg-amber-50/50', 'bg-sky-50/50');
+                btnElement.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'scale-[1.02]');
+                btnElement.querySelector('.status-icon').innerText = '✅';
+                btnElement.querySelector('.status-icon').classList.remove('hidden');
+
+                // Quick visual delay before next question
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1200);
+
+            } else {
+                // --- WRONG ANSWER ---
+                playWrongSound();
+                wrongAnswersCount++;
+
+                btnElement.classList.remove('bg-pink-50/50', 'bg-amber-50/50', 'bg-sky-50/50');
+                btnElement.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900', 'animate-wiggle');
+                btnElement.querySelector('.status-icon').innerText = '❌';
+                btnElement.querySelector('.status-icon').classList.remove('hidden');
+
+                // Highlight correct option too
+                const correctBtn = allBtns[currentData.answer];
+                if (correctBtn) {
+                    correctBtn.classList.add('bg-emerald-50', 'border-emerald-400');
+                }
+
+                // Show Explanation Modal after short pause
+                setTimeout(() => {
+                    showExplanationModal(currentData);
+                }, 800);
+            }
+        }
+
+        // Show Educational Modal for Wrong Answer
+        function showExplanationModal(data) {
+            const modal = document.getElementById('explanationModal');
+            const prefixes = ['A', 'B', 'C'];
+            document.getElementById('modalCorrectAnswer').innerText = `${prefixes[data.answer]}. ${data.options[data.answer]}`;
+            document.getElementById('modalExplanation').innerText = data.exp;
+
+            modal.classList.remove('hidden');
+            speakText(`Kunci jawaban yang benar adalah: ${data.options[data.answer]}. ${data.exp}`);
+        }
+
+        function closeModalAndNext() {
+            playClickSound();
+            document.getElementById('explanationModal').classList.add('hidden');
+            nextQuestion();
+        }
+
+        // Advance to Next Question or Finish Quiz
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < quizData.length) {
+                renderQuestion();
+            } else {
+                showResultScreen();
+            }
+        }
+
+
+        // Display Final Results Screen
+        function showResultScreen() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            const totalQuestions = quizData.length;
+            const percentage = Math.round((correctAnswersCount / totalQuestions) * 100);
+
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('correctCount').innerText = correctAnswersCount;
+            document.getElementById('wrongCount').innerText = wrongAnswersCount;
+            document.getElementById('resultPlayerGreeting').innerText = `Hebat sekali, ${playerName}! Kamu menyelesaikan kuis dengan luar biasa!`;
+
+            // Calculate Stars & Badges
+            const starsContainer = document.getElementById('starsContainer');
+            const praiseMessage = document.getElementById('praiseMessage');
+            const resultBadge = document.getElementById('resultBadge');
+
+            if (percentage >= 85) {
+                starsContainer.innerHTML = '⭐ ⭐ ⭐';
+                resultBadge.innerText = '🏆';
+                praiseMessage.innerText = '🌟 LUAR BIASA! Kamu Bintang Utama Seni Rupa!';
+                speakText(`Selamat ${playerName}! Kamu mendapatkan tiga bintang sempurna!`);
+            } else if (percentage >= 60) {
+                starsContainer.innerHTML = '⭐ ⭐ ⚪';
+                resultBadge.innerText = '🎨';
+                praiseMessage.innerText = '🎨 HEBAT! Kamu Pelukis Cilik Pintar!';
+                speakText(`Bagus sekali ${playerName}! Kamu mendapat dua bintang!`);
+            } else {
+                starsContainer.innerHTML = '⭐ ⚪ ⚪';
+                resultBadge.innerText = '🖍️';
+                praiseMessage.innerText = '💪 BAGUS! Terus berlatih agar makin jago!';
+                speakText(`Semangat ${playerName}! Teruslah berlatih!`);
+            }
+
+            // Launch Confetti Celebration Particle Effect
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function restartQuiz() {
+            playClickSound();
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        // Global Event Listener to unlock AudioContext on first interaction
+        window.addEventListener('click', () => {
+            initAudio();
+        }, { once: true });
+    </script>
+</body>
+</html>
